@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title mb-4">Post a Job</h2>
+            
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        {{ form.title.label_tag }}
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.title.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group col-md-6">
+                        {{ form.company.label_tag }}
+                        {{ form.company }}
+                        {% if form.company.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.company.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        {{ form.location.label_tag }}
+                        {{ form.location }}
+                        {% if form.location.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.location.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group col-md-6">
+                        {{ form.salary.label_tag }}
+                        {{ form.salary }}
+                        {% if form.salary.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.salary.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        {{ form.job_type.label_tag }}
+                        {{ form.job_type }}
+                    </div>
+                    
+                    <div class="form-group col-md-4">
+                        {{ form.experience_level.label_tag }}
+                        {{ form.experience_level }}
+                    </div>
+                    
+                    <div class="form-group col-md-4">
+                        {{ form.category.label_tag }}
+                        {{ form.category }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form.description.label_tag }}
+                    {{ form.description }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.requirements.label_tag }}
+                    {{ form.requirements }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.benefits.label_tag }}
+                    {{ form.benefits }}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        {{ form.application_deadline.label_tag }}
+                        {{ form.application_deadline }}
+                    </div>
+                </div>
+
+                <div class="form-group form-check">
+                    {{ form.is_active }}
+                    {{ form.is_active.label_tag }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Post Job</button>
+                <a href="{% url 'job_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+/* Custom styles for Job Portal */
+
+/* Navbar styling */
+.navbar-brand img {
+    height: 30px;
+    width: auto;
+}
+
+/* Footer styling */
+footer {
+    border-top: 1px solid #dee2e6;
+    margin-top: 3rem;
+    padding: 1rem 0;
+}
+
+/* Message alerts */
+.alert {
+    margin: 1rem 0;
+}
+
+/* Form styling */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .navbar-nav {
+        margin-top: 1rem;
+    }
+    
+    .dropdown-menu {
+        width: 100%;
+    }
+}

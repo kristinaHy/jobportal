@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <form method="get" action="{% url 'job_list' %}" class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search jobs..." value="{{ request.GET.search }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+
+            <div class="card mb-4">
+                <div class="card-header">Filters</div>
+                <div class="card-body">
+                    <form method="get">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select name="category" class="form-control">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Job Type</label>
+                            <select name="job_type" class="form-control">
+                                <option value="">All Types</option>
+                                {% for type in job_types %}
+                                <option value="{{ type.0 }}" {% if request.GET.job_type == type.0 %}selected{% endif %}>
+                                    {{ type.1 }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Experience Level</label>
+                            <select name="experience_level" class="form-control">
+                                <option value="">All Levels</option>
+                                {% for level in experience_levels %}
+                                <option value="{{ level.0 }}" {% if request.GET.experience_level == level.0 %}selected{% endif %}>
+                                    {{ level.1 }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                        <a href="{% url 'job_list' %}" class="btn btn-secondary btn-block mt-2">Clear Filters</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            {% if jobs %}
+                {% for job in jobs %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h3 class="card-title">
+                            <a href="{% url 'job_detail' job.id %}">{{ job.title }}</a>
+                            <span class="badge badge-info float-right">{{ job.get_job_type_display }}</span>
+                        </h3>
+                        <h5 class="card-subtitle mb-2 text-muted">{{ job.company }}</h5>
+                        <p class="card-text">
+                            <i class="fas fa-map-marker-alt"></i> {{ job.location }}<br>
+                            <i class="fas fa-money-bill-wave"></i> ${{ job.salary }}<br>
+                            <i class="fas fa-briefcase"></i> {{ job.get_experience_level_display }}
+                        </p>
+                        <p class="text-muted small">
+                            Posted {{ job.posted_on|timesince }} ago | 
+                            Views: {{ job.views_count }} | 
+                            Applications: {{ job.application_set.count }}
+                        </p>
+                        <div class="text-right">
+                            {% if request.user == job.posted_by %}
+                                <a href="{% url 'applicants_list' job.id %}" class="btn btn-info">View Applicants</a>
+                            {% else %}
+                                <a href="{% url 'apply_job' job.id %}" class="btn btn-primary">Apply for Job</a>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+                {% endfor %}
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                        </li>
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% else %}
+                <div class="alert alert-info">No jobs found matching your criteria.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

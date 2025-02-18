@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">{{ job.title }}</h1>
+            <h3 class="card-subtitle mb-3 text-muted">{{ job.company }}</h3>
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><i class="fas fa-map-marker-alt"></i> {{ job.location }}</p>
+                    <p><i class="fas fa-money-bill-wave"></i> ${{ job.salary }}</p>
+                    <p><i class="fas fa-briefcase"></i> {{ job.get_job_type_display }}</p>
+                    <p><i class="fas fa-chart-line"></i> {{ job.get_experience_level_display }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Posted:</strong> {{ job.posted_on|timesince }} ago</p>
+                    <p><strong>Views:</strong> {{ job.views_count }}</p>
+                    <p><strong>Applications:</strong> {{ job.application_set.count }}</p>
+                    {% if job.category %}
+                    <p><strong>Category:</strong> {{ job.category.name }}</p>
+                    {% endif %}
+                    {% if job.application_deadline %}
+                    <p><strong>Application Deadline:</strong> {{ job.application_deadline }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4>Job Description</h4>
+                <p>{{ job.description }}</p>
+            </div>
+
+            {% if job.requirements %}
+            <div class="mb-4">
+                <h4>Requirements</h4>
+                <p>{{ job.requirements }}</p>
+            </div>
+            {% endif %}
+
+            {% if job.benefits %}
+            <div class="mb-4">
+                <h4>Benefits</h4>
+                <p>{{ job.benefits }}</p>
+            </div>
+            {% endif %}
+
+            <div class="mt-4">
+                {% if user.is_authenticated %}
+                    {% if user == job.posted_by %}
+                        <div class="btn-group" role="group">
+                            <a href="{% url 'update_job' job.id %}" class="btn btn-primary">Edit Job</a>
+                            <a href="{% url 'delete_job' job.id %}" class="btn btn-danger">Delete Job</a>
+                        </div>
+                    {% elif not has_applied %}
+                        <a href="{% url 'apply_job' job.id %}" class="btn btn-success">Apply Now</a>
+                    {% else %}
+                        <div class="alert alert-info">You've already applied for this position.</div>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-warning">
+                        Please <a href="{% url 'login' %}?next={% url 'job_detail' job.id %}">login</a> to apply for this job.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if related_jobs %}
+    <div class="mt-5">
+        <h3>Related Jobs</h3>
+        <div class="row">
+            {% for related_job in related_jobs %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'job_detail' related_job.id %}">{{ related_job.title }}</a>
+                        </h5>
+                        <p class="card-text">
+                            <small class="text-muted">{{ related_job.company }}</small><br>
+                            <small>{{ related_job.location }}</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

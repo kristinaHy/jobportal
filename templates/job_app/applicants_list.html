@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Applicants for {{ job.title }}</h2>
+    
+    {% if applications %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Applicant</th>
+                        <th>Applied On</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                    <tr>
+                        <td>{{ application.applicant.username }}</td>
+                        <td>{{ application.applied_on|date:"M d, Y" }}</td>
+                        <td>
+                            <form method="post" action="{% url 'update_application_status' application.id %}" class="status-form">
+                                {% csrf_token %}
+                                <select name="status" class="form-control status-select" 
+                                        onchange="this.form.submit()">
+                                    {% for value, label in application.STATUS_CHOICES %}
+                                    <option value="{{ value }}" 
+                                            {% if value == application.status %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <a href="{% url 'view_applicant' application.id %}" 
+
+                               class="btn btn-sm btn-primary">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">No applications found for this job.</div>
+    {% endif %}
+</div>
+
+<style>
+    .status-select {
+        width: 150px;
+    }
+    .status-form {
+        margin: 0;
+    }
+</style>
+{% endblock %}
